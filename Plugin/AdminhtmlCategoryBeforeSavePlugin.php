@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MageOS\AutomaticTranslation\Plugin;
 
 use Magento\Catalog\Controller\Adminhtml\Category\Save;
-
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Filter\FilterManager;
 use MageOS\AutomaticTranslation\Helper\ModuleConfig;
