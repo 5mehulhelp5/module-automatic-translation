@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace MageOS\AutomaticTranslation\Plugin;
 
 use Magento\Catalog\Controller\Adminhtml\Category\Save;
+
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Filter\FilterManager;
 use MageOS\AutomaticTranslation\Helper\ModuleConfig;
 use MageOS\AutomaticTranslation\Helper\Service;
 use MageOS\AutomaticTranslation\Service\TranslateParsedContent;
@@ -35,7 +37,8 @@ class AdminhtmlCategoryBeforeSavePlugin
         protected Service $serviceHelper,
         protected ManagerInterface $messageManager,
         protected Logger $logger,
-        protected TranslateParsedContent $translateParsedContent
+        protected TranslateParsedContent $translateParsedContent,
+        protected FilterManager $filterManager
     ) {
     }
 
@@ -73,8 +76,8 @@ class AdminhtmlCategoryBeforeSavePlugin
                     );
 
                     if ($attributeCode === 'url_key') {
-                        $requestPostValue[$attributeCode] = strtolower(
-                            (string)preg_replace('#[^0-9a-z]+#i', '-', $requestPostValue[$attributeCode])
+                        $requestPostValue[$attributeCode] = $this->filterManager->translitUrl(
+                            (string)$requestPostValue[$attributeCode]
                         );
                     }
 
