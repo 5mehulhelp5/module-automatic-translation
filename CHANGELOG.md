@@ -1,4 +1,9 @@
 # Automatic Translation
+## [2.3.0] - 26/08/2026
+### Added
+- Support for non-Latin target languages (e.g. Greek, Cyrillic): product and category URL keys are now transliterated with Magento's URL translit filter, the same one core uses to generate URL keys
+### Fixed
+- Translating a product or category into a store view with a non-Latin alphabet no longer fails on save with an invalid URL key error caused by every non-Latin character being stripped down to a single dash
 ## [2.2.1] - 13/07/2026
 ### Fixed
 - Fixed a null argument error when creating a product under PHP 8.5
