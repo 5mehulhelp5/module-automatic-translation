@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace MageOS\AutomaticTranslation\Model\Translator;
 
+use Exception;
 use MageOS\AutomaticTranslation\Api\TranslatorInterface;
 use MageOS\AutomaticTranslation\Helper\ModuleConfig;
 use OpenAI as OpenAITranslator;
 use OpenAI\Client as OpenAIClient;
-use Exception;
+use RuntimeException;
 
 class OpenAI implements TranslatorInterface
 {
@@ -43,24 +44,24 @@ class OpenAI implements TranslatorInterface
         $prompt = 'Translate this text, with the context that this text is used in an e-commerce store as part of a'
             . ' product description or a category description without asking any further questions or'
             . ' clarifications, giving only the answer and nothing else,'
-            . $sourceFragment . ' to ' . $targetLang . ': ' . $text;
+            . $sourceFragment . ' to ' . $targetLang . '.';
 
-        try {
-            $result = $this->translator->completions()->create([
-                'model' => $this->moduleConfig->getOpenAIModel(),
-                'prompt' => $prompt
-            ]);
+        $result = $this->translator->chat()->create([
+            'model' => $this->moduleConfig->getOpenAIModel(),
+            'messages' => [
+                ['role' => 'system', 'content' => $prompt],
+                ['role' => 'user', 'content' => $text],
+            ],
+        ])->toArray();
 
-            return trim($result['choices'][0]['text']);
-        } catch (Exception) {
-            $result = $this->translator->chat()->create([
-                'model' => $this->moduleConfig->getOpenAIModel(),
-                'messages' => [
-                    ['role' => 'user', 'content' => $prompt],
-                ],
-            ])->toArray();
-
-            return trim($result['choices'][0]['message']['content']);
+        $content = $result['choices'][0]['message']['content'];
+        if ($content === null) {
+            throw new RuntimeException((string)__(
+                'OpenAI returned an empty translation for model "%1".',
+                $this->moduleConfig->getOpenAIModel()
+            ));
         }
+
+        return trim($content);
     }
 }

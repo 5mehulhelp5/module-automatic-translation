@@ -1,4 +1,9 @@
 # Automatic Translation
+## [2.3.1] - 08/09/2026
+### Fixed
+- Fixed OpenAI translations returning random text instead of the translated content: the translator now uses the Chat Completions endpoint, replacing the legacy completions one
+- Fixed OpenAI errors being silently swallowed and retried instead of reported
+
 ## [2.3.0] - 26/08/2026
 ### Added
 - Support for non-Latin target languages (e.g. Greek, Cyrillic): product and category URL keys are now transliterated with Magento's URL translit filter, the same one core uses to generate URL keys
